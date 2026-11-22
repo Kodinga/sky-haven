@@ -112,3 +112,17 @@ describe('Simulation', () => {
     expect(sim.demand.R).toBeLessThan(base);
   });
 });
+
+describe('Power reach', () => {
+  it('powers lots a couple of tiles away from a powered road', () => {
+    const world = new World(30, 30);
+    world.terrain.fill(TERRAIN.GRASS);
+    const sim = new Simulation(world);
+    const road = [];
+    for (let x = 2; x < 20; x++) road.push([x, 10]);
+    sim.applyTool({ type: 'road' }, road);
+    sim.applyTool({ type: 'building', key: 'coal' }, [[2, 11]]);
+    sim.applyTool({ type: 'zone', zone: ZONE.R }, [[12, 12]]); // gap row at y=11
+    expect(world.power[world.idx(12, 12)]).toBe(1);
+  });
+});

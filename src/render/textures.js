@@ -107,10 +107,10 @@ function speckle(ctx, rand, n, colors, size = 1) {
 }
 
 function makeGround() {
-  const grassBase = ['#7ab457', '#76b053', '#7db85a', '#73ad50'];
+  const grassBase = ['#79b456', '#78b355', '#7ab557', '#78b456'];
   for (let k = 0; k < 4; k++) {
     groundTex(`grass_${k}`, (ctx, rand) => {
-      diamond(ctx, grad(ctx, P1(0, 0), P1(1, 1), [[0, shade(grassBase[k], 1.06)], [1, shade(grassBase[k], 0.95)]]));
+      diamond(ctx, grad(ctx, P1(0, 0), P1(1, 1), [[0, shade(grassBase[k], 1.02)], [1, shade(grassBase[k], 0.985)]]));
       speckle(ctx, rand, 70, ['#6aa149', '#88c264', '#659b45', '#8fc76b']);
       if (k === 1) speckle(ctx, rand, 6, ['#f5f1c9', '#f0d34a', '#ffffff'], 1.2);
       if (k === 3) speckle(ctx, rand, 5, ['#e98bb0', '#f5f1c9'], 1.2);

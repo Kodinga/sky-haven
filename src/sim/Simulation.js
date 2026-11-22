@@ -6,6 +6,9 @@ import { World, bKey } from './World.js';
 import { mulberry32 } from './noise.js';
 
 const clamp = (v, a, b) => Math.max(a, Math.min(b, v));
+const ADJ = [[1, 0], [-1, 0], [0, 1], [0, -1]];
+const NEAR3 = [];
+for (let dy = -3; dy <= 3; dy++) for (let dx = -3; dx <= 3; dx++) if ((dx || dy) && Math.abs(dx) + Math.abs(dy) <= 3) NEAR3.push([dx, dy]);
 
 const NEWS = [
   'Local bakery wins regional croissant award.',
@@ -229,11 +232,14 @@ export class Simulation {
       while (head < tail) {
         const i = queue[head++];
         const [x, y] = w.xy(i);
-        for (const [dx, dy] of [[1, 0], [-1, 0], [0, 1], [0, -1]]) {
+        // Power flows through adjacent developed tiles; roads also feed lots within 3 tiles.
+        const reach = w.kind[i] === KIND.ROAD ? NEAR3 : ADJ;
+        for (const [dx, dy] of reach) {
           const nx = x + dx, ny = y + dy;
           if (!w.inBounds(nx, ny)) continue;
           const j = w.idx(nx, ny);
           if (visited[j] || w.kind[j] === KIND.EMPTY) continue;
+          if (reach === NEAR3 && Math.abs(dx) + Math.abs(dy) > 1 && w.kind[j] === KIND.ROAD) continue;
           visited[j] = 1;
           queue[tail++] = j;
         }
