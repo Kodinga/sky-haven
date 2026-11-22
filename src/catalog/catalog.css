@@ -1,0 +1,97 @@
+:root {
+  --bg: #0b1320;
+  --panel: rgba(17, 26, 40, 0.85);
+  --line: rgba(255, 255, 255, 0.08);
+  --text: #e8eef6;
+  --muted: #94a3b8;
+  --teal: #2dd4bf;
+  --r: #43c463;
+  --c: #3d9bf0;
+  --i: #f0b429;
+}
+* { box-sizing: border-box; }
+html { scroll-behavior: smooth; scroll-padding-top: 90px; }
+body {
+  margin: 0; font-family: 'Inter', system-ui, sans-serif; color: var(--text); -webkit-font-smoothing: antialiased;
+  background: radial-gradient(1200px 600px at 20% -10%, #17324a 0%, transparent 60%), radial-gradient(900px 500px at 100% 0%, #13283b 0%, transparent 55%), var(--bg);
+  min-height: 100vh;
+}
+a { color: inherit; text-decoration: none; }
+button { font: inherit; color: inherit; border: 0; background: none; cursor: pointer; }
+
+/* header */
+.top {
+  position: sticky; top: 0; z-index: 10; display: flex; align-items: center; gap: 20px; padding: 14px 28px;
+  background: rgba(11, 19, 32, 0.8); backdrop-filter: blur(14px); border-bottom: 1px solid var(--line);
+}
+.brand { display: flex; align-items: baseline; gap: 12px; flex: none; }
+.logo { font-weight: 800; font-size: 20px; letter-spacing: -0.03em; }
+.logo .mark { color: var(--teal); }
+.title { color: var(--muted); font-weight: 600; font-size: 14px; }
+#nav { display: flex; gap: 4px; flex: 1; overflow-x: auto; scrollbar-width: none; }
+#nav a { font-size: 13px; font-weight: 600; color: #cbd5e1; padding: 7px 11px; border-radius: 9px; white-space: nowrap; }
+#nav a::before { content: ''; display: inline-block; width: 7px; height: 7px; border-radius: 50%; background: var(--accent); margin-right: 7px; vertical-align: 1px; }
+#nav a:hover { background: rgba(255,255,255,0.06); color: #fff; }
+.controls { display: flex; align-items: center; gap: 12px; flex: none; }
+.seg { display: flex; background: rgba(255,255,255,0.05); border: 1px solid var(--line); border-radius: 11px; padding: 3px; }
+.seg button { padding: 6px 12px; border-radius: 8px; font-size: 13px; font-weight: 600; color: var(--muted); }
+.seg button.active { background: var(--teal); color: #042f2e; }
+.play { background: linear-gradient(135deg, #2dd4bf, #38bdf8); color: #04202a; font-weight: 800; font-size: 14px; padding: 9px 16px; border-radius: 11px; }
+
+main { max-width: 1320px; margin: 0 auto; padding: 0 28px 80px; }
+.loading { padding: 120px 0; text-align: center; color: var(--muted); font-size: 15px; }
+.hero { padding: 56px 0 18px; }
+.hero h1 { font-size: 40px; letter-spacing: -0.035em; margin: 0 0 10px; max-width: 760px; line-height: 1.1; }
+.hero p { color: #cbd5e1; font-size: 16px; max-width: 640px; line-height: 1.55; margin: 0; }
+
+.section { padding-top: 44px; }
+.sec-head { display: flex; align-items: baseline; gap: 16px; margin-bottom: 18px; border-left: 3px solid var(--accent); padding-left: 14px; flex-wrap: wrap; }
+.sec-head h2 { margin: 0; font-size: 24px; letter-spacing: -0.02em; }
+.sec-head p { margin: 0; color: var(--muted); font-size: 14px; max-width: 720px; }
+.grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(290px, 1fr)); gap: 16px; }
+
+/* card */
+.card {
+  background: var(--panel); border: 1px solid var(--line); border-radius: 18px; overflow: hidden; display: flex; flex-direction: column;
+  transition: transform 0.18s, border-color 0.18s, box-shadow 0.18s;
+}
+.card:hover { transform: translateY(-3px); border-color: color-mix(in srgb, var(--accent) 45%, transparent); box-shadow: 0 14px 40px rgba(0,0,0,0.35); }
+.stage {
+  height: 260px; display: flex; align-items: flex-end; justify-content: center; padding: 16px 16px 22px;
+  background: radial-gradient(70% 50% at 50% 88%, rgba(134, 192, 99, 0.22), transparent 70%), linear-gradient(180deg, #a9d6ef 0%, #d7ecf6 100%);
+  transition: background 0.5s;
+}
+body.night .stage { background: radial-gradient(70% 50% at 50% 88%, rgba(255, 196, 107, 0.12), transparent 70%), linear-gradient(180deg, #0f1930 0%, #1c2a4a 100%); }
+.pv { position: relative; flex: none; }
+.pv canvas { position: absolute; inset: 0; width: 100%; height: 100%; }
+.pv .base { transition: filter 0.5s; }
+.pv .lights { opacity: 0; transition: opacity 0.5s; }
+body.night .pv .base { filter: brightness(0.42) saturate(0.75) hue-rotate(8deg); }
+body.night .pv .lights { opacity: 1; }
+.stage .pv { filter: drop-shadow(0 6px 10px rgba(0,0,0,0.18)); }
+
+.strip { display: flex; gap: 6px; padding: 10px 14px; border-bottom: 1px solid var(--line); overflow-x: auto; scrollbar-width: thin; }
+.thumb { width: 52px; height: 52px; flex: none; border-radius: 10px; background: rgba(255,255,255,0.05); border: 1px solid transparent; display: flex; align-items: center; justify-content: center; transition: all 0.15s; }
+.thumb:hover { background: rgba(255,255,255,0.1); }
+.thumb.active { border-color: var(--accent); background: color-mix(in srgb, var(--accent) 16%, transparent); }
+
+.body { padding: 14px 16px 16px; display: flex; flex-direction: column; gap: 8px; flex: 1; }
+.head { display: flex; justify-content: space-between; align-items: center; gap: 8px; }
+.head h3 { margin: 0; font-size: 17px; letter-spacing: -0.01em; }
+.tag { font-size: 11px; font-weight: 700; padding: 3px 8px; border-radius: 99px; background: color-mix(in srgb, var(--accent) 18%, transparent); color: var(--accent); white-space: nowrap; }
+.tag.locked { background: rgba(251,191,36,0.14); color: #fbbf24; }
+.body p { margin: 0; color: var(--muted); font-size: 13px; line-height: 1.5; }
+dl { margin: 4px 0 0; display: grid; grid-template-columns: repeat(2, 1fr); gap: 6px; }
+dl div { background: rgba(255,255,255,0.04); border-radius: 9px; padding: 7px 9px; }
+dt { font-size: 10.5px; text-transform: uppercase; letter-spacing: 0.06em; color: var(--muted); font-weight: 700; }
+dd { margin: 2px 0 0; font-size: 14px; font-weight: 700; font-variant-numeric: tabular-nums; }
+.req { font-size: 12.5px; color: #cbd5e1; }
+.req span { font-size: 10.5px; text-transform: uppercase; letter-spacing: 0.06em; color: var(--muted); font-weight: 700; margin-right: 6px; }
+.count { font-size: 11.5px; color: var(--muted); margin-top: auto; }
+
+@media (max-width: 860px) {
+  .top { flex-wrap: wrap; padding: 12px 16px; }
+  #nav { order: 3; flex-basis: 100%; }
+  main { padding: 0 16px 60px; }
+  .hero h1 { font-size: 30px; }
+}

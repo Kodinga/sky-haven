@@ -621,6 +621,7 @@ export class HUD {
         <div><b>3</b> Build a <i>power plant</i> touching your network, then <i>water towers</i>.</div>
         <div><b>4</b> Add parks & services, balance the budget, watch it grow.</div>
       </div>
+      <a class="catalog-link" href="./catalog.html" target="_blank">Browse the building catalog →</a>
       <div class="controls">Left-drag to build · Right-drag or Space-drag to pan · Scroll to zoom · WASD to move · 1-8 tools · P pause</div>`;
     this.openModal('startModal');
     card.querySelector('#btnNew').addEventListener('click', () => {

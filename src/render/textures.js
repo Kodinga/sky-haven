@@ -1048,3 +1048,21 @@ export function generateTextures(s) {
   makeEffects();
   return packAtlases();
 }
+
+// Render every texture to standalone canvases (no Phaser needed) — used by the catalog page.
+export function renderAllCanvases() {
+  pending = [];
+  makeGround();
+  makeRoads();
+  makeTrees();
+  makeResidential();
+  makeCommercial();
+  makeIndustrial();
+  makeConstruction();
+  makeServices();
+  makeCars();
+  makeEffects();
+  const out = new Map(pending.map((p) => [p.key, p.canvas]));
+  pending = [];
+  return out;
+}
