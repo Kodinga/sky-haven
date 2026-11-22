@@ -196,15 +196,15 @@ export class Simulation {
       w[k].fill(0);
     }
 
-    // Road access (within 2 tiles, manhattan).
+    // Road access (within 3 tiles, manhattan).
     let roads = 0;
     for (let i = 0; i < n; i++) {
       if (w.kind[i] !== KIND.ROAD) continue;
       roads++;
       const [x, y] = w.xy(i);
-      for (let dy = -2; dy <= 2; dy++) {
-        for (let dx = -2; dx <= 2; dx++) {
-          if (Math.abs(dx) + Math.abs(dy) > 2) continue;
+      for (let dy = -3; dy <= 3; dy++) {
+        for (let dx = -3; dx <= 3; dx++) {
+          if (Math.abs(dx) + Math.abs(dy) > 3) continue;
           const nx = x + dx, ny = y + dy;
           if (w.inBounds(nx, ny)) w.access[w.idx(nx, ny)] = 1;
         }

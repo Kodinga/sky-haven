@@ -264,10 +264,11 @@ export class GameScene extends Phaser.Scene {
   refreshIcons() {
     const w = this.world;
     const want = new Set();
+    const showRoad = this.tool.type === 'zone' || this.tool.type === 'road';
     for (let i = 0; i < w.n; i++) {
       if (w.kind[i] !== KIND.ZONE) continue;
       if (w.level[i] && !w.build[i] && !w.power[i]) want.add(i);
-      else if (!w.level[i] && !w.access[i]) want.add(-i - 1);
+      else if (showRoad && !w.level[i] && !w.access[i]) want.add(-i - 1);
     }
     for (const [k, icon] of this.icons) if (!want.has(k)) { icon.destroy(); this.icons.delete(k); }
     for (const k of want) {
@@ -550,6 +551,7 @@ export class GameScene extends Phaser.Scene {
     this.drag = null;
     this.previewG.clear();
     this.ghost.setVisible(false);
+    this.refreshIcons();
     const p = this.input.activePointer;
     if (p) this.updatePreview(p);
   }

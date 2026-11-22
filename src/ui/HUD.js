@@ -387,6 +387,10 @@ export class HUD {
   }
 
   toast(text, kind = 'info', onClick) {
+    const now = performance.now();
+    this.recentToasts ||= new Map();
+    if (now - (this.recentToasts.get(text) || -1e9) < 12000) return;
+    this.recentToasts.set(text, now);
     const t = document.createElement('div');
     t.className = `toast ${kind}`;
     t.textContent = text;
@@ -574,7 +578,7 @@ export class HUD {
 
   // --- start screen -----------------------------------------------------------------
   showStart() {
-    audio.click();
+    if (this.started) audio.click();
     if (this.sim) this.prevSpeed = this.sim.speed;
     if (this.sim) this.sim.speed = 0;
     const card = this.$('startCard');

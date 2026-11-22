@@ -4,6 +4,7 @@ import { HUD } from './ui/HUD.js';
 import { World } from './sim/World.js';
 import { Simulation } from './sim/Simulation.js';
 import { loadGame, hasSave } from './sim/save.js';
+import { audio } from './audio.js';
 
 window.addEventListener('unhandledrejection', (e) => console.error('Unhandled Rejection:', e.reason));
 
@@ -22,6 +23,7 @@ const game = new Phaser.Game({
   scale: { mode: Phaser.Scale.NONE, width: window.innerWidth * dpr, height: window.innerHeight * dpr, zoom: 1 / dpr },
   render: { antialias: true, powerPreference: 'high-performance' },
   disableContextMenu: true,
+  audio: { noAudio: true },
   scene: [],
 });
 
@@ -66,7 +68,11 @@ const saved = hasSave() ? loadGame() : null;
 hud.backdropIsSave = !!saved;
 const backdrop = saved || newSim('Skyhaven');
 backdrop.speed = 0;
-startCity(backdrop);
+game.events.once('ready', () => startCity(backdrop));
 hud.showStart();
 
+window.addEventListener('pointerdown', () => audio.ensure()?.resume?.(), { capture: true });
 window.addEventListener('beforeunload', () => { if (hud.started) hud.save(false); });
+
+// Debug handle (handy for console tinkering and automated screenshots).
+window.skyhaven = { game, hud };
