@@ -1,0 +1,22 @@
+{
+  "name": "skyhaven",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Skyhaven — a beautiful isometric city-building game for the browser, built with Phaser.",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "sim:bench": "node scripts/sim-bench.js"
+  },
+  "dependencies": {
+    "phaser": "3.90.0"
+  },
+  "devDependencies": {
+    "vite": "^8.3.8",
+    "vitest": "^5.1.1"
+  }
+}
