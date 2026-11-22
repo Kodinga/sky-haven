@@ -16,7 +16,9 @@ Browser isometric city-building game. Phaser 3 (rendering) + vanilla JS simulati
 - `src/render/` — procedural texture generation (no image assets) and iso math
 - `src/scenes/` — Phaser scenes (`GameScene` renders the world, cars, day/night, input)
 - `src/ui/` — HTML HUD (toolbar, stats, advisor, overlays)
-- `docs/` — design notes
+- `docs/README.md` — player guide + architecture
+- `.claude/skills/run-game` — how to launch/verify the game
+- Debug handle: `window.skyhaven = { game, hud }`
 
 ## Conventions
 - Simulation must stay deterministic-ish and Phaser-free.
