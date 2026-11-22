@@ -125,9 +125,15 @@ function makeGround() {
     speckle(ctx, rand, 30, ['#bdb9af', '#d3cfc6']);
   });
   // Animated water: deep and shallow, 3 frames each.
+  const shoreEdges = [
+    [1, [[0.88, 0], [1, 0], [1, 1], [0.88, 1]], (t) => [[t, 0.05], [t, 0.95]]],
+    [2, [[0, 0.88], [1, 0.88], [1, 1], [0, 1]], (t) => [[0.05, t], [0.95, t]]],
+    [4, [[0, 0], [0.12, 0], [0.12, 1], [0, 1]], (t) => [[1 - t, 0.05], [1 - t, 0.95]]],
+    [8, [[0, 0], [1, 0], [1, 0.12], [0, 0.12]], (t) => [[0.05, 1 - t], [0.95, 1 - t]]],
+  ];
   for (const [kind, c0, c1, foam] of [['d', '#2c7bb5', '#3a8cc6', 0.22], ['s', '#46aec4', '#5cc0cf', 0.35]]) {
-    for (let f = 0; f < 3; f++) {
-      groundTex(`water_${kind}_${f}`, (ctx) => {
+    for (let f = 0; f < 3; f++) for (let mask = 0; mask < (kind === 's' ? 16 : 1); mask++) {
+      groundTex(kind === 's' ? `water_s_${mask}_${f}` : `water_d_${f}`, (ctx) => {
         const rand = mulberry32(77 + (kind === 'd' ? 0 : 5));
         diamond(ctx, grad(ctx, P1(0, 0), P1(1, 1), [[0, c1], [1, c0]]));
         ctx.strokeStyle = `rgba(255,255,255,${foam})`;
@@ -140,6 +146,15 @@ function makeGround() {
           ctx.moveTo(x - 4, y);
           ctx.quadraticCurveTo(x, y - 1.6, x + 4, y);
           ctx.stroke();
+        }
+        for (const [bit, rim, line] of shoreEdges) {
+          if (!(mask & bit)) continue;
+          quad(ctx, P1, rim.map(([u, v]) => [u, v, 0]), 'rgba(233,217,166,0.95)');
+          const t = 0.8 - f * 0.025;
+          const [a, b] = line(t);
+          ctx.strokeStyle = `rgba(255,255,255,${0.75 - f * 0.15})`;
+          ctx.lineWidth = 1.3;
+          ctx.beginPath(); ctx.moveTo(...P1(a[0], a[1])); ctx.lineTo(...P1(b[0], b[1])); ctx.stroke();
         }
       });
     }

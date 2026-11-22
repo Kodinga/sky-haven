@@ -94,6 +94,11 @@ export class HUD {
         </div>
       </div>
 
+      <div class="hud goals panel" id="goals">
+        <div class="panel-title">Goals</div>
+        <div id="goalList"></div>
+      </div>
+
       <div class="hud advisor panel" id="advisor">
         <div class="avatar">${ICONS.advisor}</div>
         <div class="advisor-body">
@@ -163,6 +168,11 @@ export class HUD {
       if (!this.$('budgetModal').classList.contains('hidden')) this.renderBudget();
     });
     sim.on('day', () => this.scheduleStats());
+    sim.on('goal', (g) => {
+      audio.cash();
+      this.toast(`Goal complete: ${g.text}  +${money(g.reward)}`, 'good');
+      this.renderGoals(g.id);
+    });
     sim.on('changed', () => this.scheduleStats());
     sim.on('extinguished', () => this.toast('Firefighters saved a building!', 'good'));
     sim.on('burned', () => this.toast('A building burned down. Fire stations help prevent this.', 'danger'));
@@ -180,6 +190,7 @@ export class HUD {
       this.$('btnCycle').innerHTML = night > 0.5 ? ICONS.moon : ICONS.sun;
     });
     this.selectTool('inspect');
+    this.renderGoals();
     this.setSpeed(sim.speed, true);
     this.updateStats();
     this.updateCycleButton();
@@ -231,6 +242,17 @@ export class HUD {
       e.rankBar.style.width = '100%';
     }
     this.refreshLocks();
+  }
+
+  renderGoals(doneId) {
+    const list = this.$('goalList');
+    const goals = this.sim.activeGoals;
+    if (!goals.length) { list.innerHTML = '<div class="goal done">All goals complete — legendary mayor!</div>'; return; }
+    const html = goals.map((g) => `<div class="goal"><span class="dot"></span><span class="gt">${g.text}</span><span class="gr">+${money(g.reward)}</span></div>`).join('');
+    if (doneId) {
+      list.insertAdjacentHTML('afterbegin', '<div class="goal done flash"><span class="dot"></span><span class="gt">Completed!</span></div>');
+      setTimeout(() => { list.innerHTML = html; }, 900);
+    } else list.innerHTML = html;
   }
 
   floatMoney(n) {

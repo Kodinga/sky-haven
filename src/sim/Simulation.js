@@ -27,6 +27,26 @@ const NEWS = [
   'Sunset photos from the waterfront go viral.',
 ];
 
+export const GOALS = [
+  { id: 'road', text: 'Lay down 15 road tiles', reward: 1000, check: (s) => s.stats.roads >= 15 },
+  { id: 'res', text: 'Zone 12 residential lots', reward: 1000, check: (s) => s.counts.R >= 12 },
+  { id: 'power', text: 'Build a power plant', reward: 1500, check: (s) => s.stats.powerCap > 0 },
+  { id: 'pop50', text: 'Welcome your first 50 residents', reward: 2000, check: (s) => s.stats.pop >= 50 },
+  { id: 'jobs', text: 'Zone commercial and industrial land', reward: 1500, check: (s) => s.counts.C >= 4 && s.counts.I >= 4 },
+  { id: 'water', text: 'Build a water tower', reward: 1500, check: (s) => s.counts.b.watertower > 0 },
+  { id: 'park', text: 'Give citizens a park', reward: 800, check: (s) => s.counts.b.park > 0 },
+  { id: 'village', text: 'Grow into a Village (150 people)', reward: 1000, check: (s) => s.stats.pop >= 150 },
+  { id: 'safety', text: 'Build police and fire stations', reward: 2500, check: (s) => s.counts.b.police > 0 && s.counts.b.fire > 0 },
+  { id: 'school', text: 'Open a school', reward: 3000, check: (s) => s.counts.b.school > 0 },
+  { id: 'town', text: 'Grow into a Town (700 people)', reward: 3000, check: (s) => s.stats.pop >= 700 },
+  { id: 'happy', text: 'Reach 70% approval with 500+ people', reward: 4000, check: (s) => s.stats.approval >= 70 && s.stats.pop >= 500 },
+  { id: 'hospital', text: 'Build a hospital', reward: 4000, check: (s) => s.counts.b.hospital > 0 },
+  { id: 'city', text: 'Become a City (2,500 people)', reward: 5000, check: (s) => s.stats.pop >= 2500 },
+  { id: 'stadium', text: 'Build the Stadium', reward: 10000, check: (s) => s.counts.b.stadium > 0 },
+  { id: 'metro', text: 'Become a Metropolis (9,000 people)', reward: 20000, check: (s) => s.stats.pop >= 9000 },
+  { id: 'spire', text: 'Crown your skyline with the Spire', reward: 30000, check: (s) => s.counts.b.spire > 0 },
+];
+
 export class Simulation {
   constructor(world, opts = {}) {
     this.world = world || new World().generate(opts.seed);
@@ -36,6 +56,8 @@ export class Simulation {
     this.tax = opts.tax ?? DEFAULT_TAX;
     this.milestone = opts.milestone ?? 0;
     this.history = opts.history ?? [];
+    this.goalsDone = new Set(opts.goalsDone || []);
+    this.counts = { R: 0, C: 0, I: 0, b: {} };
     this.speed = 1;
     this.acc = 0;
     this.rand = mulberry32((opts.seed ?? 1) ^ 0x9e3779b9);
@@ -316,8 +338,12 @@ export class Simulation {
     const w = this.world;
     let pop = 0, jobsC = 0, jobsI = 0, buildings = 0, unpowered = 0, developed = 0;
     let resPol = 0, resCrime = 0, resServ = 0, resFun = 0, resTiles = 0;
+    const counts = { R: 0, C: 0, I: 0, b: {} };
+    for (const k of Object.keys(BUILDINGS)) counts.b[k] = 0;
     for (let i = 0; i < w.n; i++) {
+      if (w.kind[i] === KIND.BUILDING && w.root[i] === i) counts.b[bKey(w.btype[i])]++;
       if (w.kind[i] !== KIND.ZONE) continue;
+      counts[ZONE_KEYS[w.zone[i]]]++;
       const lvl = w.level[i];
       if (!lvl || w.build[i]) continue;
       buildings++;
@@ -334,6 +360,7 @@ export class Simulation {
       } else if (z === ZONE.C) jobsC += CAPACITY.C[lvl];
       else if (z === ZONE.I) jobsI += CAPACITY.I[lvl];
     }
+    this.counts = counts;
     const workers = pop * 0.55;
     const jobs = jobsC + jobsI;
     const s = this.stats;
@@ -359,6 +386,20 @@ export class Simulation {
     this.demand.R = clamp(dR + taxAdj + appAdj, -1, 1);
     this.demand.C = clamp(dC + taxAdj, -1, 1);
     this.demand.I = clamp(dI + taxAdj, -1, 1);
+    this.checkGoals();
+  }
+
+  get activeGoals() { return GOALS.filter((g) => !this.goalsDone.has(g.id)).slice(0, 3); }
+
+  checkGoals() {
+    if (!this.goalsDone) return;
+    for (const g of this.activeGoals) {
+      if (g.check(this)) {
+        this.goalsDone.add(g.id);
+        this.money += g.reward;
+        this.emit('goal', g);
+      }
+    }
   }
 
   // --- growth -------------------------------------------------------------
@@ -585,7 +626,7 @@ export class Simulation {
   serialize() {
     return {
       v: 1, cityName: this.cityName, money: this.money, day: this.day, tax: this.tax,
-      milestone: this.milestone, history: this.history, world: this.world.serialize(),
+      milestone: this.milestone, history: this.history, goalsDone: [...this.goalsDone], world: this.world.serialize(),
     };
   }
 

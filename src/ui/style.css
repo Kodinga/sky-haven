@@ -95,6 +95,15 @@ button { font: inherit; color: inherit; cursor: pointer; border: 0; background: 
 .fill.r { background: var(--r); } .fill.c { background: var(--c); } .fill.i { background: var(--i); }
 .fill.neg { opacity: 0.45; }
 
+/* goals */
+.goals { top: 246px; left: 14px; width: 260px; padding: 12px 14px; }
+.goal { display: flex; align-items: center; gap: 8px; font-size: 12.5px; padding: 5px 0; color: #dbe4ee; }
+.goal .dot { width: 14px; height: 14px; border-radius: 50%; border: 2px solid rgba(255,255,255,0.3); flex: none; }
+.goal .gt { flex: 1; line-height: 1.3; }
+.goal .gr { font-size: 11px; font-weight: 700; color: var(--warn); }
+.goal.done .dot { background: var(--good); border-color: var(--good); }
+.goal.flash { color: var(--good); font-weight: 700; animation: fadeIn 0.3s; }
+
 /* advisor & news */
 .advisor { left: 14px; bottom: 112px; width: 330px; padding: 12px 14px; display: flex; gap: 12px; align-items: flex-start; }
 .avatar { width: 38px; height: 38px; border-radius: 12px; background: linear-gradient(135deg, #2dd4bf, #6366f1); display: flex; align-items: center; justify-content: center; flex: none; color: #fff; }
@@ -239,7 +248,7 @@ button { font: inherit; color: inherit; cursor: pointer; border: 0; background: 
   .advisor, .news { width: 280px; }
 }
 @media (max-width: 980px) {
-  .minimap, .demand, .news { display: none; }
+  .minimap, .demand, .news, .goals { display: none; }
   .advisor { display: none; }
   .tool .lbl { display: none; }
   .tool { min-width: 0; }

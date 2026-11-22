@@ -129,7 +129,16 @@ export class GameScene extends Phaser.Scene {
     const [x, y] = w.xy(i);
     const t = w.terrain[i], k = w.kind[i];
     if (k === KIND.ROAD) return (t === TERRAIN.WATER ? 'bridge_' : 'road_') + w.roadMask(x, y);
-    if (t === TERRAIN.WATER) return `water_${this.isShallow(x, y) ? 's' : 'd'}_${(this.waterFrame + w.variant[i]) % 3}`;
+    if (t === TERRAIN.WATER) {
+      const f = (this.waterFrame + w.variant[i]) % 3;
+      if (!this.isShallow(x, y)) return `water_d_${f}`;
+      let m = 0;
+      for (const d of DIRS) {
+        const nx = x + d.dx, ny = y + d.dy;
+        if (w.inBounds(nx, ny) && w.terrain[w.idx(nx, ny)] !== TERRAIN.WATER) m |= d.bit;
+      }
+      return `water_s_${m}_${f}`;
+    }
     if (k === KIND.ZONE && !w.level[i] && !w.build[i]) return `zone_${ZONE_KEYS[w.zone[i]]}`;
     if (k === KIND.BUILDING) return 'pave';
     if (t === TERRAIN.SAND) return 'sand';
