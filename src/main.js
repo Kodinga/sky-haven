@@ -75,4 +75,4 @@ window.addEventListener('pointerdown', () => audio.ensure()?.resume?.(), { captu
 window.addEventListener('beforeunload', () => { if (hud.started) hud.save(false); });
 
 // Debug handle (handy for console tinkering and automated screenshots).
-window.skyhaven = { game, hud };
+window.skyhaven = { game, hud, audio };

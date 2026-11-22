@@ -36,7 +36,7 @@ Autosaves every 3 in-game months and on page close (localStorage).
 - `src/render/` — canvas-2D procedural art packed into texture atlases; iso projection; ambient light curve.
 - `src/scenes/GameScene.js` — Phaser scene: tile sprites, depth sorting, traffic agents, particles, clouds, overlays, input.
 - `src/ui/` — HTML/CSS HUD over the canvas.
-- `src/audio.js` — WebAudio-synthesized SFX and ambience.
+- `src/audio.js` — WebAudio-synthesized SFX and a location-aware soundscape. `GameScene` samples the tiles around the screen centre every 0.2s (`sim/soundMix.js`) and the mix drives continuous beds (surf, leaves, city murmur, traffic rumble, factory drone, fountains, high-altitude wind) plus random one-shots (birds by day / crickets at night, gulls, passing cars, horns, clanks, steam, hammering on construction, fire crackle, wind chimes, dogs, stadium cheers, turbine whooshes), panned toward where they are on screen. Zooming out turns detail into a distant wash.
 
 ## Tests
 ```bash

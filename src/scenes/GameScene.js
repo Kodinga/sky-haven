@@ -3,6 +3,8 @@ import { TW, TH, RES, KIND, TERRAIN, ZONE_KEYS, BUILDINGS, CAPACITY } from '../c
 import { bKey, DIRS } from '../sim/World.js';
 import { generateTextures, setTex, texArgs, ATLAS_OF, META, VARIANTS, CAR_COLORS } from '../render/textures.js';
 import { toWorld, toTile, depthOf, ambientAt, rgbInt } from '../render/iso.js';
+import { soundMix } from '../sim/soundMix.js';
+import { audio } from '../audio.js';
 
 const SCALE = 1 / RES;
 const DAY_LENGTH = 300; // real seconds per visual day/night cycle
@@ -709,5 +711,22 @@ export class GameScene extends Phaser.Scene {
     for (const list of this.extras.values()) for (const o of list) if (o.spin) o.rotation += o.spin * dt;
     this.updateCars(dt);
     this.updateClouds(dt);
+    this.updateSoundscape(dt);
+  }
+
+  // Feed the soundscape with whatever sits at the centre of the screen.
+  updateSoundscape(dt) {
+    this.soundT = (this.soundT || 0) + dt;
+    if (this.soundT < 0.2 || !audio.ctx) return;
+    const step = this.soundT;
+    this.soundT = 0;
+    const cam = this.cameras.main;
+    const v = cam.worldView;
+    const a = v.centerX / (TW / 2), b = v.centerY / (TH / 2);
+    const cx = (b + a) / 2, cy = (b - a) / 2;
+    const radius = Phaser.Math.Clamp((v.width / TW) * 0.5, 4, 36);
+    const cars = this.cars.map((c) => ({ x: c.x + c.dx * c.t, y: c.y + c.dy * c.t }));
+    this.soundState = soundMix(this.world, cx, cy, radius, cars);
+    audio.updateScape(this.soundState, this.night ?? 0, cam.zoom / this.dpr, step);
   }
 }
